@@ -15,8 +15,12 @@
         </ul>
       </div>
       <div class="auth-buttons">
-        <button class="sign-in">Sign In</button>
-        <button class="sign-up">Sign up</button>
+        <router-link to="/singIn">
+          <button class="sign-in">Sign In</button>
+        </router-link>
+        <router-link to="/singUp">
+          <button class="sign-up">Sign up</button>
+        </router-link>
       </div>
     </div>
   </header>
@@ -37,7 +41,7 @@ const store = useStore();
   padding: 20px 0;
 }
 
-.line{
+.line {
   background: #fff;
   height: 79px;
   width: 1px;
@@ -50,11 +54,9 @@ const store = useStore();
   margin: 0 auto;
 }
 
-
-.nav  {
+.nav {
   display: flex;
   align-items: center;
-
 }
 
 .nav ul {
@@ -73,16 +75,12 @@ const store = useStore();
   padding: 0 10px;
   cursor: pointer;
 }
-.right{
+.right {
   text-align: right;
 }
-.nav li:hover{
-  color: #DF4924;
+.nav li:hover {
+  color: #df4924;
 }
-
-
-
-
 
 .auth-buttons {
   position: absolute;
@@ -91,13 +89,14 @@ const store = useStore();
   gap: 20px; /* Пространство между кнопками */
 }
 
-.sign-in, .sign-up {
+.sign-in,
+.sign-up {
   font-family: Inter;
   font-weight: 400;
   font-size: 20px;
   background-color: transparent;
   border: none;
-  color: #DF4924;
+  color: #df4924;
   cursor: pointer;
   font-weight: 400;
   font-size: 20px;

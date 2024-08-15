@@ -1,9 +1,12 @@
-// <script setup>
+<script setup>
 // import Row from '../components/Row.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 
 </script> 
 
 <template>
+   <Header />
     <div class="product-section">
       <div class="product-container">
         <div class="product-image">
@@ -53,6 +56,7 @@
       </div>
     </div>
     <!-- <Row /> -->
+    <Footer />
 </template>
 
 <style scoped>

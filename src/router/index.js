@@ -8,13 +8,19 @@ const router = createRouter({
       path: '/',
       name: 'main',
       component: Main
+    },
+    {
+      path: '/singUp',
+      name: 'singUp',
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/RegistrationForm.vue')
+    },
+    {
+      path: '/singIn',
+      name: 'singIN',
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/LoginForm.vue')
     }
-    // {
-    //   path: '/cart',
-    //   name: 'cart',
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/Cart.vue')
-    // }
   ]
 })
 
