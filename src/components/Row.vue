@@ -154,7 +154,7 @@ export default {};
 .linear {
   position: relative;
   width: 85%;
-  height: 1px;
+  height: 3px;
   background: #e1dddd;
 }
 .span2{
