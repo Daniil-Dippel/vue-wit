@@ -1,6 +1,9 @@
 <script setup>
-// import Row from '../components/Row.vue'
 import Header from '../components/Header.vue'
+import Row from '../components/Row.vue'
+import Puncts from '../components/Puncts.vue'
+import LevelUp from '../components/LevelUp.vue'
+import MobileApp from '../components/MobileApp.vue'
 import Footer from '../components/Footer.vue'
 
 </script> 
@@ -54,8 +57,11 @@ import Footer from '../components/Footer.vue'
           </p>
         </div>
       </div>
+      <Row />
+      <Puncts />
+      <LevelUp />
+      <MobileApp />
     </div>
-    <!-- <Row /> -->
     <Footer />
 </template>
 
@@ -63,7 +69,7 @@ import Footer from '../components/Footer.vue'
 .product-section {
   background-color: #fff;
   padding: 60px 20px;
-  text-align: right;
+  
 }
 
 .product-container {
@@ -73,6 +79,7 @@ import Footer from '../components/Footer.vue'
   justify-content: space-between;
   max-width: 1440px;
   margin: 0 auto;
+  text-align: right;
 }
 
 .product-content {
@@ -86,6 +93,7 @@ import Footer from '../components/Footer.vue'
   font-family: Poppins;
   font-size: 64px;
   margin: 0;
+  text-align: right;
 }
 
 .product-content .cta-link {
@@ -105,6 +113,7 @@ import Footer from '../components/Footer.vue'
   font-weight: 500;
   font-family: Inter;
   margin: 0;
+  text-align: right;
 }
 
 .product-image {
@@ -141,6 +150,7 @@ import Footer from '../components/Footer.vue'
   margin-bottom: 10px;
   font-weight: 400;
   color: #6C6C70;
+  
 }
 
 .feature p {
