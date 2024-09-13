@@ -8,15 +8,13 @@ if (!cart?.length) {
 }
 export default createStore({
   state: {
-    totalPrice: JSON.parse(localStorage.getItem('cart')).reduce((a,b) => a +(b.price * b.counter), 0),
-    totalCount: JSON.parse(localStorage.getItem('cart')).reduce((a,b) => a + b.counter, 0),
+    activeElement: "",
   },
   getters: {
   },
   mutations: {
-    TOTAL_COUNT_PRICE: (state, payload) => {
-      state.totalCount = payload.reduce((a,b) => a + b.counter, 0);
-      state.totalPrice = payload.reduce((a,b) => a+(b.price * b.counter), 0);
+    upload (state, newStates){
+      state.activeElement = newStates
     },
   },
   actions: {

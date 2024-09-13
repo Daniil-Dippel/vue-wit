@@ -1,75 +1,76 @@
 <script setup>
-import Header from '../components/Header.vue'
-import Row from '../components/Row.vue'
-import Puncts from '../components/Puncts.vue'
-import LevelUp from '../components/LevelUp.vue'
-import MobileApp from '../components/MobileApp.vue'
-import Footer from '../components/Footer.vue'
-
+import Header from "../components/Header.vue";
+import Row from "../components/Row.vue";
+import Puncts from "../components/Puncts.vue";
+import LevelUp from "../components/LevelUp.vue";
+import MobileApp from "../components/MobileApp.vue";
+import FreeWit from "../components/FreeWit.vue";
+import FAQ from "../components/FAQ.vue";
+import PromoBanner from "../components/PromoBanner.vue";
+import Footer from "../components/Footer.vue";
 </script> 
 
 <template>
-   <Header />
-    <div class="product-section">
-      <div class="product-container">
-        <div class="product-image">
-          <img
-            src="../assets/img/laptop.jpg"
-            alt="Laptop displaying the product"
-          />
-        </div>
-        <div class="product-content">
-          <h1>Unlock the power of our product to accelerate your workflow</h1>
-          <h2 class="cta-link">Unlock the power</h2>
-          <p>
-            Simplify management. Streamline compliance, optimize fleet
-            operations, prioritize driver safety—all in one comprehensive
-            platform.
-          </p>
-        </div>
-        
+  <Header />
+  <div class="product-section">
+    <div class="product-container">
+      <div class="product-image">
+        <img
+          src="../assets/img/laptop.jpg"
+          alt="Laptop displaying the product"
+        />
       </div>
-      <div class="product-features">
-        <div class="feature">
-          <h4>01</h4>
-          <div class="line"></div>
-          <p>
-            Everything you need to manage your fleet - all in one place: Driver
-            Safety, GPS Tracking, and ELD Compliance. The most user-friendly ELD
-            device and application.
-          </p>
-        </div>
-        <div class="feature">
-          <h4>02</h4>
-          <div class="line"></div>
-          <p>
-            TT ELD is an industry-leading electronic logging device. Our ELD
-            compliance solutions provide users with a wide variety of
-            comprehensive features.
-          </p>
-        </div>
-        <div class="feature">
-          <h4>03</h4>
-          <div class="line"></div>
-          <p>
-            We recognize the significance of a holistic approach to every case,
-            and tailor our strategies uniquely to each one.
-          </p>
-        </div>
+      <div class="product-content">
+        <h1>Unlock the power of our product to accelerate your workflow</h1>
+        <h2 class="cta-link">Unlock the power</h2>
+        <p>
+          Simplify management. Streamline compliance, optimize fleet operations,
+          prioritize driver safety—all in one comprehensive platform.
+        </p>
       </div>
-      <Row />
-      <Puncts />
-      <LevelUp />
-      <MobileApp />
     </div>
-    <Footer />
+    <div class="product-features">
+      <div class="feature">
+        <h4>01</h4>
+        <div class="line"></div>
+        <p>
+          Everything you need to manage your fleet - all in one place: Driver
+          Safety, GPS Tracking, and ELD Compliance. The most user-friendly ELD
+          device and application.
+        </p>
+      </div>
+      <div class="feature">
+        <h4>02</h4>
+        <div class="line"></div>
+        <p>
+          TT ELD is an industry-leading electronic logging device. Our ELD
+          compliance solutions provide users with a wide variety of
+          comprehensive features.
+        </p>
+      </div>
+      <div class="feature">
+        <h4>03</h4>
+        <div class="line"></div>
+        <p>
+          We recognize the significance of a holistic approach to every case,
+          and tailor our strategies uniquely to each one.
+        </p>
+      </div>
+    </div>
+    <Row />
+    <Puncts />
+    <LevelUp />
+    <MobileApp />
+    <FreeWit />
+    <FAQ />
+    <PromoBanner />
+  </div>
+  <Footer />
 </template>
 
 <style scoped>
 .product-section {
   background-color: #fff;
-  padding: 60px 20px;
-  
 }
 
 .product-container {
@@ -80,6 +81,7 @@ import Footer from '../components/Footer.vue'
   max-width: 1440px;
   margin: 0 auto;
   text-align: right;
+  padding-top: 130px;
 }
 
 .product-content {
@@ -88,7 +90,7 @@ import Footer from '../components/Footer.vue'
 }
 
 .product-content h1 {
-  color: #DF4924;
+  color: #df4924;
   font-weight: 600;
   font-family: Poppins;
   font-size: 64px;
@@ -99,7 +101,7 @@ import Footer from '../components/Footer.vue'
 .product-content .cta-link {
   display: inline-block;
   font-family: Poppins;
-  color: #DF4924;
+  color: #df4924;
   font-weight: 500;
   font-size: 24px;
   text-decoration: none;
@@ -107,7 +109,7 @@ import Footer from '../components/Footer.vue'
 }
 
 .product-content p {
-  color: #2E2E2E;
+  color: #2e2e2e;
   text-align: right;
   font-size: 20px;
   font-weight: 500;
@@ -134,10 +136,10 @@ import Footer from '../components/Footer.vue'
   text-align: left;
 }
 
-.line{
+.line {
   height: 1px;
   width: 100%;
-  background: #E7E7E7;
+  background: #e7e7e7;
 }
 .feature {
   flex: 1;
@@ -149,12 +151,11 @@ import Footer from '../components/Footer.vue'
   font-family: Inter;
   margin-bottom: 10px;
   font-weight: 400;
-  color: #6C6C70;
-  
+  color: #6c6c70;
 }
 
 .feature p {
-  color: #6C6C70;
+  color: #6c6c70;
   font-family: Inter;
   font-weight: 400;
   font-size: 16px;

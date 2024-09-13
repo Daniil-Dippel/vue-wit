@@ -20,6 +20,24 @@ const router = createRouter({
       name: 'singIN',
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/LoginForm.vue')
+    },
+    {
+      path: '/eld',
+      name: 'eld',
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Main.vue')
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/About.vue')
+    },
+    {
+      path: '/tms',
+      name: 'tms',
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Tms.vue')
     }
   ]
 })
