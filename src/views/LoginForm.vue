@@ -76,7 +76,7 @@
       </div>
 
       <div class="btn_log__in">
-        <button type="submit" class="login-button">Sign in</button>
+        <button @click="loginUser" type="submit" class="login-button">Sign in</button>
       </div>
       <div class="additional-options">
         <span class="forgot-password">Forget password?</span>
@@ -90,23 +90,59 @@
   </div>
 </template>
   
-  <script>
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      showPassword: false,
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Обработка отправки формы
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const email = ref("");
+const password = ref("");
+const showPassword = ref(false);
+
+const router = useRouter();
+
+function loginUser() {
+  if (!email.value || !password.value) {
+    alert('Please fill in both fields.');
+    return;
+  }
+
+  const loginData = {
+    email: email.value,
+    password: password.value,
+  };
+
+  fetch('http://35.246.201.72/api/v1/account/login/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword;
-    },
-  },
+    body: JSON.stringify(loginData),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+  
+      localStorage.setItem('refreshToken', data.refresh);
+      localStorage.setItem('accessToken', data.access);
+
+      if (data.access) {
+        router.push('/dashboard'); 
+      } else {
+        alert('Authentication failed.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Failed to log in.');
+    });
+}
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
 };
 </script>
   
