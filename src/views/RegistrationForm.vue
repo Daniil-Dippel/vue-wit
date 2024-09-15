@@ -160,25 +160,23 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router"; // Используем Vue Router для навигации
-
+import { useRouter } from "vue-router"; 
 const firstName = ref("");
 const lastName = ref("");
 const email = ref("");
 const phone = ref("");
 const password = ref("");
-const password2 = ref('');
-const confirmPassword = ref("");
+const password2 = ref("");
 const company = ref("");
 const usdot = ref("");
 const numberEmployees = ref(null);
 const termsAccepted = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
-const router = useRouter(); // Инициализируем router
+const router = useRouter(); 
+
 const handleSubmit = async () => {
   try {
     const payload = {
@@ -200,29 +198,47 @@ const handleSubmit = async () => {
       body: JSON.stringify(payload),
     });
 
-    // Проверка ответа
     if (!response.ok) {
-      const errorText = await response.text(); // Чтение текста ответа
-      console.error('Registration failed:', errorText);
+      const errorResponse = await response.text(); // Чтение ответа как текст
+
+      // Если сервер вернул HTML вместо JSON
+      if (errorResponse.startsWith("<!DOCTYPE html>")) {
+        router.push("/singIn"); // Перенаправление на страницу входа
+      } else {
+        // Если ошибка связана с существующим email
+        try {
+          const errorJson = JSON.parse(errorResponse);
+          if (errorJson.email && errorJson.email.includes("user with this email already exists.")) {
+            alert("Пользователь с таким email уже существует.");
+          } else {
+            alert("Ошибка регистрации: " + JSON.stringify(errorJson));
+          }
+        } catch (e) {
+          console.error("Не удалось разобрать ответ сервера:", errorResponse);
+        }
+      }
+
       throw new Error('Network response was not ok');
     }
 
     const result = await response.json();
-    // Обработка успешного ответа
     if (result.success) {
-      alert('Registration successful');
+      alert('Регистрация успешна');
+      router.push('/singIn');
     } else {
-      alert('Registration failed: ' + result.message);
+      alert('Ошибка регистрации: ' + result.message);
     }
   } catch (error) {
     console.error('Error:', error);
   }
 };
+
 const handleErrors = (errorData) => {
   for (const [field, errors] of Object.entries(errorData)) {
     console.error(`${field}: ${errors.join(', ')}`);
   }
 };
+
 function togglePasswordVisibility() {
   showPassword.value = !showPassword.value;
 }
