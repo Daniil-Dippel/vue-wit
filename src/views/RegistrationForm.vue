@@ -63,7 +63,7 @@
               required
             />
             <svg
-              @click="toggleConfirmPasswordVisibility"
+              @click="togglePasswordVisibility"
               width="30"
               height="23"
               viewBox="0 0 30 23"
@@ -90,11 +90,10 @@
             <label for="confirmPassword">Confirm password</label>
             <input
               :type="showConfirmPassword ? 'text' : 'password'"
-              v-model="confirmPassword"
+              v-model="password2"
               id="confirmPassword"
               required
             />
-
             <svg
               @click="toggleConfirmPasswordVisibility"
               width="30"
@@ -142,8 +141,8 @@
         </div>
         <div class="form-group checkbox-group">
           <input type="checkbox" id="terms" v-model="termsAccepted" />
-          <label class="check" for="terms"
-            >By checking this box, you ackowledge that you havr read,
+          <label class="check" for="terms">
+            By checking this box, you acknowledge that you have read,
             understand, and agree to our <span>Terms and Privacy Policy</span>
           </label>
         </div>
@@ -161,39 +160,78 @@
     </div>
   </div>
 </template>
-  
-<script>
-export default {
-  data() {
-    return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-      company: "",
-      usdot: "",
-      numberEmployees: null,
-      termsAccepted: false,
-      showPassword: false,
-      showConfirmPassword: false,
+
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router"; // Используем Vue Router для навигации
+
+const firstName = ref("");
+const lastName = ref("");
+const email = ref("");
+const phone = ref("");
+const password = ref("");
+const password2 = ref('');
+const confirmPassword = ref("");
+const company = ref("");
+const usdot = ref("");
+const numberEmployees = ref(null);
+const termsAccepted = ref(false);
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+const router = useRouter(); // Инициализируем router
+const handleSubmit = async () => {
+  try {
+    const payload = {
+      email: email.value,
+      password: password.value,
+      password2: password2.value,
+      phone: phone.value,
+      company: company.value,
+      usdot: usdot.value,
+      number_employees: numberEmployees.value,
     };
-  },
-  methods: {
-    handleSubmit() {
-      // Логика отправки формы
-    },
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword;
-    },
-    toggleConfirmPasswordVisibility() {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    },
-  },
+
+    // Отправка запроса на сервер
+    const response = await fetch('http://35.246.201.72/api/v1/account/register/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    // Проверка ответа
+    if (!response.ok) {
+      const errorText = await response.text(); // Чтение текста ответа
+      console.error('Registration failed:', errorText);
+      throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    // Обработка успешного ответа
+    if (result.success) {
+      alert('Registration successful');
+    } else {
+      alert('Registration failed: ' + result.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 };
+const handleErrors = (errorData) => {
+  for (const [field, errors] of Object.entries(errorData)) {
+    console.error(`${field}: ${errors.join(', ')}`);
+  }
+};
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value;
+}
+
+function toggleConfirmPasswordVisibility() {
+  showConfirmPassword.value = !showConfirmPassword.value;
+}
 </script>
-  
+
 <style scoped>
 .check {
   font-size: 20px;
