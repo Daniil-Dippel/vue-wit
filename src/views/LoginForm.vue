@@ -101,44 +101,45 @@ const showPassword = ref(false);
 const router = useRouter();
 
 function loginUser() {
-  if (!email.value || !password.value) {
-    alert('Please fill in both fields.');
-    return;
-  }
+  router.push('/dashboard');
+  // if (!email.value || !password.value) {
+  //   alert('Please fill in both fields.');
+  //   return;
+  // }
 
-  const loginData = {
-    email: email.value,
-    password: password.value,
-  };
+  // const loginData = {
+  //   email: email.value,
+  //   password: password.value,
+  // };
 
-  fetch('http://35.246.201.72/api/v1/account/login/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(loginData),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((data) => {
+  // fetch('http://35.246.201.72/api/v1/account/login/', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify(loginData),
+  // })
+  //   .then((response) => {
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     return response.json();
+  //   })
+  //   .then((data) => {
   
-      localStorage.setItem('refreshToken', data.refresh);
-      localStorage.setItem('accessToken', data.access);
+  //     localStorage.setItem('refreshToken', data.refresh);
+  //     localStorage.setItem('accessToken', data.access);
 
-      if (data.access) {
-        router.push('/dashboard'); 
-      } else {
-        alert('Authentication failed.');
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      alert('Failed to log in.');
-    });
+  //     if (data.access) {
+  //       router.push('/dashboard'); 
+  //     } else {
+  //       alert('Authentication failed.');
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     console.error('Error:', error);
+  //     alert('Failed to log in.');
+  //   });
 }
 
 const togglePasswordVisibility = () => {

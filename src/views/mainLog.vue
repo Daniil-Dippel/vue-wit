@@ -1,5 +1,41 @@
 <script setup>
 import SlaidBar from "../components/SlaidBar.vue";
+import { ref } from "vue";
+
+import InputWithCalendar from '../components/InputWithCalendar.vue'; 
+
+const inputs = ref([
+  { date: '' }
+]); 
+const fileName = ref("");
+const errorMessage = ref("");
+const fileInput = ref(null); 
+
+const selectFile = () => {
+  fileInput.value.click(); 
+};
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  validateFile(file);
+};
+
+const handleDrop = (event) => {
+  const file = event.dataTransfer.files[0];
+  validateFile(file);
+};
+
+const validateFile = (file) => {
+  if (file) {
+    if (file.size > 10 * 1024 * 1024) {
+      errorMessage.value = "Please select a file smaller than 10 MB.";
+      fileName.value = ""; 
+    } else {
+      errorMessage.value = ""; 
+      fileName.value = file.name; 
+    }
+  }
+};
 </script>
 
 <template>
@@ -14,7 +50,7 @@ import SlaidBar from "../components/SlaidBar.vue";
             <h1 class="window-title__h1">Add Load</h1>
           </div>
           <div class="window-second">
-            <a href="" class="link-load">Load Files</a>
+            <router-link to="/" class="link-load">Load Files</router-link>
             <div class="window-secinput">
               <div class="window-secinput__inputs">
                 <label for="name" class="window-name">Load Id</label>
@@ -41,7 +77,7 @@ import SlaidBar from "../components/SlaidBar.vue";
                 <label for="name" class="window-name">Broker</label>
                 <div class="folder-block__plus">
                   <input type="text" class="window-input folder-input" />
-                  <a href="" class="link-plus">
+                  <router-link to="/" class="link-plus">
                     <svg
                       width="24"
                       height="24"
@@ -80,7 +116,7 @@ import SlaidBar from "../components/SlaidBar.vue";
                         </clipPath>
                       </defs>
                     </svg>
-                  </a>
+                  </router-link>
                 </div>
               </div>
 
@@ -93,7 +129,7 @@ import SlaidBar from "../components/SlaidBar.vue";
               <label for="name" class="window-name">Broker Emails</label>
               <div class="folder-block__plus">
                 <input type="text" class="window-input folder-input" />
-                <a href="" class="link-plus">
+                <router-link to="/" class="link-plus">
                   <svg
                     width="24"
                     height="24"
@@ -132,21 +168,38 @@ import SlaidBar from "../components/SlaidBar.vue";
                       </clipPath>
                     </defs>
                   </svg>
-                </a>
+                </router-link>
               </div>
               <label for="name" class="window-name">Unit</label>
               <input type="text" class="window-input folder-input" />
               <label for="name" class="window-name">Loaded mile</label>
               <input type="text" class="window-input folder-input" />
             </div>
-            <div class="image-folder">
+            <div
+              @dragover.prevent
+              @drop="handleDrop"
+              class="image-folder"
+              @click="selectFile"
+            >
               <img src="../assets/img/img-1.png" alt="" />
-              <a href="" class="image-folder__link"
-                >Drag and drop or Click here</a
-              >
+              <router-link to="" class="image-folder__link">
+                Drag and drop or Click here
+              </router-link>
               <p class="image-folder__text">
-                The largest file size that can be uploaded is 10 mb
+                {{
+                  fileName ||
+                  "The largest file size that can be uploaded is 10 mb"
+                }}
               </p>
+              <p v-if="errorMessage" class="error-message">
+                {{ errorMessage }}
+              </p>
+              <input
+                type="file"
+                ref="fileInput"
+                @change="handleFileChange"
+                style="display: none"
+              />
             </div>
           </div>
 
@@ -157,7 +210,7 @@ import SlaidBar from "../components/SlaidBar.vue";
           </div>
           <div class="border-block">
             <div class="border-block__copy">
-              <a href="">
+              <router-link to="/">
                 <svg
                   width="24"
                   height="28"
@@ -180,7 +233,7 @@ import SlaidBar from "../components/SlaidBar.vue";
                     stroke-linejoin="round"
                   />
                 </svg>
-              </a>
+              </router-link>
             </div>
             <div class="border-block__inputs">
               <div class="window-secinput__inputs border-block__width">
@@ -189,188 +242,12 @@ import SlaidBar from "../components/SlaidBar.vue";
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">From Date</label>
-                <div class="input-container">
-                  <input
-                    type="text"
-                    class="window-input input-svg border-block__width"
-                  />
-                  <!-- Вставляем иконку -->
-                  <span class="icon">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2.32031 7.05322H15.6883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 9.98242H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 9.98242H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 9.98242H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 12.897H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 12.897H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 12.897H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.0312 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.97656 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.1787 2.68457H5.82822C3.6257 2.68457 2.25 3.91152 2.25 6.16684V12.9541C2.25 15.2449 3.6257 16.5002 5.82822 16.5002H12.1718C14.3812 16.5002 15.75 15.2662 15.75 13.0108V6.16684C15.7569 3.91152 14.3882 2.68457 12.1787 2.68457Z"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </div>
+                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">To Date</label>
                 <!-- <input type="text" class=" window-input input-svg"> -->
-                <div class="input-container">
-                  <input
-                    type="text"
-                    class="window-input input-svg border-block__width"
-                  />
-
-                  <span class="icon">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2.32031 7.05322H15.6883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 9.98242H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 9.98242H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 9.98242H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 12.897H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 12.897H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 12.897H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.0312 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.97656 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.1787 2.68457H5.82822C3.6257 2.68457 2.25 3.91152 2.25 6.16684V12.9541C2.25 15.2449 3.6257 16.5002 5.82822 16.5002H12.1718C14.3812 16.5002 15.75 15.2662 15.75 13.0108V6.16684C15.7569 3.91152 14.3882 2.68457 12.1787 2.68457Z"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </div>
+                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
               </div>
             </div>
             <div class="border-block__2inputs">
@@ -378,14 +255,16 @@ import SlaidBar from "../components/SlaidBar.vue";
                 <label for="name" class="window-name">Location</label>
                 <div class="folder-block__plus">
                   <input type="text" class="window-input folder-input" />
-                  <a href="" class="link-plus border-block__plus"> </a>
+                  <router-link to="/" class="link-plus border-block__plus">
+                  </router-link>
                 </div>
               </div>
               <div class="border-block__location">
                 <label for="name" class="window-name">Location Contact</label>
                 <div class="folder-block__plus">
                   <input type="text" class="window-input folder-input" />
-                  <a href="" class="link-plus border-block__plus"> </a>
+                  <router-link to="/" class="link-plus border-block__plus">
+                  </router-link>
                 </div>
               </div>
               <div class="window-secinput__inputs border-block__width">
@@ -402,7 +281,7 @@ import SlaidBar from "../components/SlaidBar.vue";
               <input type="text" class="window-input load-information__input" />
             </div>
             <div class="save">
-              <a href="" class="save-link">Save</a>
+              <router-link to="/" class="save-link">Save</router-link>
             </div>
           </div>
           <div class="border-block">
@@ -410,7 +289,7 @@ import SlaidBar from "../components/SlaidBar.vue";
               <h2 class="border-block__yellow">Stop 2</h2>
 
               <div class="border-block__copy">
-                <a href="">
+                <router-link to="/">
                   <svg
                     width="24"
                     height="28"
@@ -433,7 +312,7 @@ import SlaidBar from "../components/SlaidBar.vue";
                       stroke-linejoin="round"
                     />
                   </svg>
-                </a>
+                </router-link>
               </div>
             </div>
 
@@ -444,188 +323,12 @@ import SlaidBar from "../components/SlaidBar.vue";
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">From Date</label>
-                <div class="input-container">
-                  <input
-                    type="text"
-                    class="window-input input-svg border-block__width"
-                  />
-
-                  <span class="icon">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2.32031 7.05322H15.6883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 9.98242H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 9.98242H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 9.98242H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 12.897H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 12.897H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 12.897H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.0312 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.97656 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.1787 2.68457H5.82822C3.6257 2.68457 2.25 3.91152 2.25 6.16684V12.9541C2.25 15.2449 3.6257 16.5002 5.82822 16.5002H12.1718C14.3812 16.5002 15.75 15.2662 15.75 13.0108V6.16684C15.7569 3.91152 14.3882 2.68457 12.1787 2.68457Z"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </div>
+                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">To Date</label>
 
-                <div class="input-container">
-                  <input
-                    type="text"
-                    class="window-input input-svg border-block__width"
-                  />
-
-                  <span class="icon">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2.32031 7.05322H15.6883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 9.98242H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 9.98242H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 9.98242H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.3281 12.897H12.335"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M9 12.897H9.00695"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.67188 12.897H5.67883"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12.0312 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M5.97656 1.5V3.96809"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.1787 2.68457H5.82822C3.6257 2.68457 2.25 3.91152 2.25 6.16684V12.9541C2.25 15.2449 3.6257 16.5002 5.82822 16.5002H12.1718C14.3812 16.5002 15.75 15.2662 15.75 13.0108V6.16684C15.7569 3.91152 14.3882 2.68457 12.1787 2.68457Z"
-                        stroke="#D1D1D1"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </div>
+                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
               </div>
             </div>
             <div class="border-block__2inputs">
@@ -633,14 +336,16 @@ import SlaidBar from "../components/SlaidBar.vue";
                 <label for="name" class="window-name">Location</label>
                 <div class="folder-block__plus">
                   <input type="text" class="window-input folder-input" />
-                  <a href="" class="link-plus border-block__plus"> </a>
+                  <router-link to="/" class="link-plus border-block__plus">
+                  </router-link>
                 </div>
               </div>
               <div class="border-block__location">
                 <label for="name" class="window-name">Location Contact</label>
                 <div class="folder-block__plus">
                   <input type="text" class="window-input folder-input" />
-                  <a href="" class="link-plus border-block__plus"> </a>
+                  <router-link to="/" class="link-plus border-block__plus">
+                  </router-link>
                 </div>
               </div>
               <div class="window-secinput__inputs border-block__width">
@@ -654,15 +359,15 @@ import SlaidBar from "../components/SlaidBar.vue";
               <input type="text" class="window-input load-information__input" />
             </div>
             <div class="save">
-              <a href="" class="save-link">Save</a>
+              <router-link to="/" class="save-link">Save</router-link>
             </div>
           </div>
           <div class="footer-container">
             <h2>Total stop - 2</h2>
             <div class="footer-container__links">
               <div class="trip">
-                <a href="" class="btn-trip">Round trip</a>
-                <a href="" class="btn-stop"
+                <router-link to="/" class="btn-trip">Round trip</router-link>
+                <router-link to="/" class="btn-stop"
                   >Add Stop
                   <svg
                     width="18"
@@ -702,11 +407,11 @@ import SlaidBar from "../components/SlaidBar.vue";
                       </clipPath>
                     </defs>
                   </svg>
-                </a>
+                </router-link>
               </div>
               <div class="btn-footer">
-                <a href="">Cancel</a>
-                <a href="">Create</a>
+                <router-link to="/">Cancel</router-link>
+                <router-link to="/">Create</router-link>
               </div>
             </div>
           </div>
@@ -717,5 +422,4 @@ import SlaidBar from "../components/SlaidBar.vue";
 </template>
 
 <style>
-
 </style>

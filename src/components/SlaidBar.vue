@@ -8,7 +8,7 @@
     <p
       v-for="(item, index) in menuItems"
       :key="index"
-      @click="setActive(index)"
+      @click="setActive(index, item.route)" 
       :class="{ active: activeIndex === index }"
       class="menu-item"
     >
@@ -35,57 +35,66 @@ export default {
       menuItems: [
         {
           text: "Overview",
+          route: "/dashboard", 
           iconClass: "fa-tachometer-alt",
           iconSrc: "../icons/1. Overview (1).svg",
           activeIconSrc: "../icons/1. Overview.svg", 
         },
         {
-          text: "Feedback",
-          iconClass: "fas fa-clipboard-list",
-          iconSrc: "../icons/10. Feedback.svg",
-          activeIconSrc: "../icons/10. Feedback-active.svg", // Путь к активной иконке
-        },
-        {
           text: "Dispatch",
+          route: "/dispatch",
           iconClass: "fas fa-user",
           iconSrc: "../icons/2. Dispatch.svg",
-          activeIconSrc: "../icons/2. Dispatch-active.svg", // Путь к активной иконке
+          activeIconSrc: "../icons/2. Dispatch-active.svg",
         },
         {
           text: "ELD",
+          route: "/eld",
           iconClass: "fas fa-map-marker-alt",
           iconSrc: "../icons/3. ELD.svg",
           activeIconSrc: "../icons/Icon - ELD.svg",
         },
         {
           text: "Report",
+          route: "/report",
           iconClass: "fas fa-cog",
           iconSrc: "../icons/4. Report.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
+          activeIconSrc: "../icons/4. Report-active.svg",
         },
         {
           text: "List",
+          route: "/list",
           iconClass: "fas fa-cog",
           iconSrc: "../icons/5. List.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
+          activeIconSrc: "../icons/5. List-active.svg",
         },
         {
           text: "Chat",
+          route: "/chat",
           iconClass: "fas fa-cog",
           iconSrc: "../icons/6. Chat.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
+          activeIconSrc: "../icons/6. Chat-active.svg",
         },
         {
           text: "Notification",
+          route: "/notification",
           iconClass: "fas fa-cog",
           iconSrc: "../icons/7. Notofocations.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
+          activeIconSrc: "../icons/7. Notofocations-active.svg",
+        },
+        {
+          text: "Feedback",
+          route: "/feedback",
+          iconClass: "fas fa-clipboard-list",
+          iconSrc: "../icons/10. Feedback.svg",
+          activeIconSrc: "../icons/10. Feedback-active.svg",
         },
         {
           text: "User",
-          iconClass: "fas1 fa-cog",
+          route: "/user",
+          iconClass: "fas fa-cog",
           iconSrc: "../icons/user.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
+          activeIconSrc: "../icons/user.svg",
         },
       ],
     };
@@ -94,13 +103,13 @@ export default {
     toggleSidebar() {
       this.isExpanded = !this.isExpanded;
     },
-    setActive(index) {
+    setActive(index, route) {
       this.activeIndex = index;
+      this.$router.push(route); // Переход по роуту
     },
   },
 };
 </script>
-
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
