@@ -76,7 +76,9 @@
       </div>
 
       <div class="btn_log__in">
-        <button @click="loginUser" type="submit" class="login-button">Sign in</button>
+        <button @click="loginUser" type="submit" class="login-button">
+          Sign in
+        </button>
       </div>
       <div class="additional-options">
         <span class="forgot-password">Forget password?</span>
@@ -102,7 +104,7 @@ const router = useRouter();
 
 function loginUser() {
   if (!email.value || !password.value) {
-    alert('Please fill in both fields.');
+    alert("Please fill in both fields.");
     return;
   }
 
@@ -111,33 +113,48 @@ function loginUser() {
     password: password.value,
   };
 
-  fetch('http://34.141.16.56/api/v1/account/login/', {
-    method: 'POST',
+  fetch("http://34.141.16.56/api/v1/account/login/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(loginData),
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
       return response.json();
     })
     .then((data) => {
-  
-      localStorage.setItem('refreshToken', data.refresh);
-      localStorage.setItem('accessToken', data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+      localStorage.setItem("accessToken", data.access);
+
+      
+      const accessToken = localStorage.getItem("accessToken");
+
+      fetch("https://api.example.com/user", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error("Error:", error));
+
+
 
       if (data.access) {
-        router.push('/dashboard'); 
+        router.push("/dashboard");
       } else {
-        alert('Authentication failed.');
+        alert("Authentication failed.");
       }
     })
     .catch((error) => {
-      console.error('Error:', error);
-      alert('Failed to log in.');
+      console.error("Error:", error);
+      alert("Failed to log in.");
     });
 }
 
