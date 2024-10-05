@@ -41,37 +41,37 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('../views/mainLog.vue'),
-    // beforeEnter: (to, from, next) => {
-    //   if (isAuthenticated()) {
-    //     next();
-    //   } else {
-    //     next('/singIn'); 
-    //   }
-    // }
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next();
+      } else {
+        next('/singIn'); 
+      }
+    }
   },
   {
     path: '/dispatch',
     name: 'dispatch',
     component: () => import('../views/Map.vue'),
-    // beforeEnter: (to, from, next) => {
-    //   if (isAuthenticated()) {
-    //     next();
-    //   } else {
-    //     next('/singIn'); 
-    //   }
-    // }
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next();
+      } else {
+        next('/singIn'); 
+      }
+    }
   },
   {
     path: '/chat',
     name: 'chat',
     component: () => import('../views/Chat.vue'),
-    // beforeEnter: (to, from, next) => {
-    //   if (isAuthenticated()) {
-    //     next();
-    //   } else {
-    //     next('/singIn'); 
-    //   }
-    // }
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next();
+      } else {
+        next('/singIn'); 
+      }
+    }
   }
 ];
 
