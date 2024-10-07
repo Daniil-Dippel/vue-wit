@@ -186,7 +186,8 @@ const handleSubmit = async () => {
       phone: phone.value,
       company: company.value,
       usdot: usdot.value,
-      number_employees: numberEmployees.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
     };
 
     // Отправка запроса на сервер
@@ -211,7 +212,9 @@ const handleSubmit = async () => {
           if (errorJson.email && errorJson.email.includes("user with this email already exists.")) {
             alert("Пользователь с таким email уже существует.");
           } else {
-            alert("Ошибка регистрации: " + JSON.stringify(errorJson));
+            console.log(JSON.stringify(payload));
+            alert("Ошибка регистрации1: " + JSON.stringify(errorJson));
+            
           }
         } catch (e) {
           console.error("Не удалось разобрать ответ сервера:", errorResponse);
@@ -222,11 +225,12 @@ const handleSubmit = async () => {
     }
 
     const result = await response.json();
-    if (result.success) {
-      alert('Регистрация успешна');
+    if (result.success || result.message === undefined) {
       router.push('/singIn');
+      alert('Регистрация успешна');
     } else {
-      alert('Ошибка регистрации: ' + result.message);
+
+      alert('Ошибка регистрации2: ' + result.message);
     }
   } catch (error) {
     console.error('Error:', error);

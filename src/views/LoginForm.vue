@@ -95,6 +95,10 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const emit = defineEmits();
+const store = useStore();
 
 const email = ref("");
 const password = ref("");
@@ -133,7 +137,7 @@ function loginUser() {
       
       const accessToken = localStorage.getItem("accessToken");
 
-      fetch("https://api.example.com/user", {
+      fetch("http://34.141.16.56/api/v1/account/userinfo/", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -141,7 +145,7 @@ function loginUser() {
         },
       })
         .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((data) => store.commit("logDataAdd", data))
         .catch((error) => console.error("Error:", error));
 
 

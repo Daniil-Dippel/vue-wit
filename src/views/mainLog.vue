@@ -1,18 +1,20 @@
 <script setup>
 import SlaidBar from "../components/SlaidBar.vue";
 import { ref } from "vue";
+import { useStore } from "vuex";
 
-import InputWithCalendar from '../components/InputWithCalendar.vue'; 
+const emit = defineEmits();
+const store = useStore();
 
-const inputs = ref([
-  { date: '' }
-]); 
+import InputWithCalendar from "../components/InputWithCalendar.vue";
+
+const inputs = ref([{ date: "" }]);
 const fileName = ref("");
 const errorMessage = ref("");
-const fileInput = ref(null); 
+const fileInput = ref(null);
 
 const selectFile = () => {
-  fileInput.value.click(); 
+  fileInput.value.click();
 };
 
 const handleFileChange = (event) => {
@@ -29,13 +31,26 @@ const validateFile = (file) => {
   if (file) {
     if (file.size > 10 * 1024 * 1024) {
       errorMessage.value = "Please select a file smaller than 10 MB.";
-      fileName.value = ""; 
+      fileName.value = "";
     } else {
-      errorMessage.value = ""; 
-      fileName.value = file.name; 
+      errorMessage.value = "";
+      fileName.value = file.name;
     }
   }
 };
+
+const accessToken = localStorage.getItem("accessToken");
+
+fetch("http://34.141.16.56/api/v1/account/userinfo/", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+  },
+})
+  .then((response) => response.json())
+  .then((data) => store.commit("logDataAdd", data))
+  .catch((error) => console.error("Error:", error));
 </script>
 
 <template>
@@ -242,12 +257,20 @@ const validateFile = (file) => {
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">From Date</label>
-                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
+                <InputWithCalendar
+                  v-for="(input, index) in inputs"
+                  :key="index"
+                  v-model="input.date"
+                />
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">To Date</label>
                 <!-- <input type="text" class=" window-input input-svg"> -->
-                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
+                <InputWithCalendar
+                  v-for="(input, index) in inputs"
+                  :key="index"
+                  v-model="input.date"
+                />
               </div>
             </div>
             <div class="border-block__2inputs">
@@ -323,12 +346,20 @@ const validateFile = (file) => {
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">From Date</label>
-                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
+                <InputWithCalendar
+                  v-for="(input, index) in inputs"
+                  :key="index"
+                  v-model="input.date"
+                />
               </div>
               <div class="window-secinput__inputs border-block__width">
                 <label for="name" class="window-name">To Date</label>
 
-                <InputWithCalendar v-for="(input, index) in inputs" :key="index" v-model="input.date" />
+                <InputWithCalendar
+                  v-for="(input, index) in inputs"
+                  :key="index"
+                  v-model="input.date"
+                />
               </div>
             </div>
             <div class="border-block__2inputs">

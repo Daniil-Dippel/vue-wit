@@ -8,7 +8,7 @@
     <p
       v-for="(item, index) in menuItems"
       :key="index"
-      @click="setActive(index, item.route)" 
+      @click="setActive(index, item.route)"
       :class="{ active: activeIndex === index }"
       class="menu-item"
     >
@@ -23,97 +23,135 @@
         >{{ item.text }}</span
       >
     </p>
+    <p class="menu-item">
+      <img src="../icons/user.svg" alt="" class="fas fa-cog use">
+      <span>{{ logData.first_name }}</span>
+    </p>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      isExpanded: false,
-      activeIndex: null,
-      menuItems: [
-        {
-          text: "Overview",
-          route: "/dashboard", 
-          iconClass: "fa-tachometer-alt",
-          iconSrc: "../icons/1. Overview (1).svg",
-          activeIconSrc: "../icons/1. Overview.svg", 
-        },
-        {
-          text: "Dispatch",
-          route: "/dispatch",
-          iconClass: "fas fa-user",
-          iconSrc: "../icons/2. Dispatch.svg",
-          activeIconSrc: "../icons/2. Dispatch-active.svg",
-        },
-        {
-          text: "ELD",
-          route: "/eld",
-          iconClass: "fas fa-map-marker-alt",
-          iconSrc: "../icons/3. ELD.svg",
-          activeIconSrc: "../icons/Icon - ELD.svg",
-        },
-        {
-          text: "Report",
-          route: "/report",
-          iconClass: "fas fa-cog",
-          iconSrc: "../icons/4. Report.svg",
-          activeIconSrc: "../icons/4. Report-active.svg",
-        },
-        {
-          text: "List",
-          route: "/list",
-          iconClass: "fas fa-cog",
-          iconSrc: "../icons/5. List.svg",
-          activeIconSrc: "../icons/5. List-active.svg",
-        },
-        {
-          text: "Chat",
-          route: "/chat",
-          iconClass: "fas fa-cog",
-          iconSrc: "../icons/6. Chat.svg",
-          activeIconSrc: "../icons/6. Chat-active.svg",
-        },
-        {
-          text: "Notification",
-          route: "/notification",
-          iconClass: "fas fa-cog",
-          iconSrc: "../icons/7. Notofocations.svg",
-          activeIconSrc: "../icons/7. Notofocations-active.svg",
-        },
-        {
-          text: "Feedback",
-          route: "/feedback",
-          iconClass: "fas fa-clipboard-list",
-          iconSrc: "../icons/10. Feedback.svg",
-          activeIconSrc: "../icons/10. Feedback-active.svg",
-        },
-        {
-          text: "User",
-          route: "/user",
-          iconClass: "fas fa-cog",
-          iconSrc: "../icons/user.svg",
-          activeIconSrc: "../icons/user.svg",
-        },
-      ],
-    };
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+
+
+const isExpanded = ref(false);
+const activeIndex = ref(null);
+const store = useStore();
+const router = useRouter();
+
+const dataInfo = ref(null);
+
+// const accessToken = localStorage.getItem("accessToken");
+
+// fetch("http://34.141.16.56/api/v1/account/userinfo/", {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//           "Content-Type": "application/json",
+//         },
+//       })
+//         .then((response) => response.json())
+//         .then((data) => dataInfo.value = data)
+//         .catch((error) => console.error("Error:", error));
+// setTimeout(() => {
+//   console.log(dataInfo.value);
+// },1000);
+
+
+// Делаем данные из Vuex доступными в компоненте
+const logData = computed(() => store.state.logData);
+// Элементы меню
+const menuItems = ref([
+  {
+    text: "Overview",
+    route: "/dashboard",
+    iconClass: "fa-tachometer-alt",
+    iconSrc: "../icons/1. Overview (1).svg",
+    activeIconSrc: "../icons/1. Overview.svg",
   },
-  methods: {
-    toggleSidebar() {
-      this.isExpanded = !this.isExpanded;
-    },
-    setActive(index, route) {
-      this.activeIndex = index;
-      this.$router.push(route); // Переход по роуту
-    },
+  {
+    text: "Dispatch",
+    route: "/dispatch",
+    iconClass: "fas fa-user",
+    iconSrc: "../icons/2. Dispatch.svg",
+    activeIconSrc: "../icons/2. Dispatch-active.svg",
   },
+  {
+    text: "ELD",
+    route: "/elds",
+    iconClass: "fas fa-map-marker-alt",
+    iconSrc: "../icons/3. ELD.svg",
+    activeIconSrc: "../icons/Icon - ELD.svg",
+  },
+  {
+    text: "Report",
+    route: "/report",
+    iconClass: "fas fa-cog",
+    iconSrc: "../icons/4. Report.svg",
+    activeIconSrc: "../icons/4. Report-active.svg",
+  },
+  {
+    text: "List",
+    route: "/list",
+    iconClass: "fas fa-cog",
+    iconSrc: "../icons/5. List.svg",
+    activeIconSrc: "../icons/5. List-active.svg",
+  },
+  {
+    text: "Chat",
+    route: "/chat",
+    iconClass: "fas fa-cog",
+    iconSrc: "../icons/6. Chat.svg",
+    activeIconSrc: "../icons/6. Chat-active.svg",
+  },
+  {
+    text: "Notification",
+    route: "/notification",
+    iconClass: "fas fa-cog",
+    iconSrc: "../icons/7. Notofocations.svg",
+    activeIconSrc: "../icons/7. Notofocations-active.svg",
+  },
+  {
+    text: "Feedback",
+    route: "/feedback",
+    iconClass: "fas fa-clipboard-list",
+    iconSrc: "../icons/10. Feedback.svg",
+    activeIconSrc: "../icons/10. Feedback-active.svg",
+  }
+]);
+// console.log("User Data:", logData.value);
+// Функция для переключения видимости сайдбара
+const toggleSidebar = () => {
+  isExpanded.value = !isExpanded.value;
 };
+
+// Функция для установки активного элемента и перехода по роуту
+const setActive = (index, route) => {
+  activeIndex.value = index;
+  router.push(route);
+};
+
+// Действие при монтировании компонента
+onMounted(() => {
+  store.dispatch("fetchLogData"); // Вызываем action для получения данных
+  // console.log("User Data:", logData.value);
+});
 </script>
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+/* .use{
+  position: fixed;
+  bottom: 10%;
+}
+.use span{
+  position: fixed;
+  bottom: 10%;
+} */
 .maps {
   height: 100%;
   margin: 0;
@@ -129,20 +167,20 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
+  min-height: 38px;
 }
 
 .menu-item img {
   margin-right: 10px;
 }
 
-
-
 .active img {
-  filter: hue-rotate(0deg) brightness(1) contrast(1) saturate(1) sepia(0) drop-shadow(0 0 0) !important; /* Или вы можете использовать другой способ изменения цвета */
+  filter: hue-rotate(0deg) brightness(1) contrast(1) saturate(1) sepia(0)
+    drop-shadow(0 0 0) !important; /* Или вы можете использовать другой способ изменения цвета */
 }
 
 .active-text {
-  color: #DF4924; /* Цвет текста при активном состоянии */
+  color: #df4924; /* Цвет текста при активном состоянии */
 }
 
 /* Стили для кнопки */
@@ -172,6 +210,7 @@ export default {
 /* Стили для текста в свернутом состоянии */
 .sidebar p span {
   display: none; /* Прячем текст по умолчанию */
+  margin: 0;
 }
 
 /* Когда боковая панель развернута, показываем текст */
@@ -270,7 +309,8 @@ export default {
   transition: width 0.3s ease;
 }
 p {
-  margin-top: 40px;
+  margin: 0;
+  margin-top: 20px;
 }
 .main-input::placeholder {
   color: #a3a3a3; /* Цвет плейсхолдера */
