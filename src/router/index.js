@@ -38,6 +38,11 @@ const routes = [
     component: () => import('../views/Tms.vue')
   },
   {
+    path: '/store',
+    name: 'store',
+    component: () => import('../views/Store.vue')
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('../views/mainLog.vue'),

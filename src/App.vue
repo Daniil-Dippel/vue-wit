@@ -1,13 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import { RouterView } from "vue-router";
-
-
-
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrappers qwe">
     <RouterView />
   </div>
 </template>
@@ -19,7 +16,10 @@ import { RouterView } from "vue-router";
 .flex {
   display: flex;
 }
-
+.wrappers {
+  max-width: 1920px;
+  margin: 0 auto;
+}
 .active {
   color: #df4924;
 }
@@ -29,15 +29,19 @@ import { RouterView } from "vue-router";
   align-items: center;
 }
 .fon {
-  background-image: url("./assets/img/fon.jpg");
+  background: url("./assets/img/fon.jpg") center center no-repeat fixed;
   background-size: cover;
   padding-top: 50px;
   padding-bottom: 50px;
+  width: 100%;
+  height: 100%;
 }
 body {
   padding: 0;
   margin: 0;
   background-color: #171416;
+  width: 100%;
+  height: 100%;
 }
 body::-webkit-scrollbar {
   display: none;

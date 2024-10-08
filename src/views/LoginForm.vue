@@ -168,6 +168,9 @@ const togglePasswordVisibility = () => {
 </script>
   
 <style scoped>
+.qwe{
+  all: unset;
+}
 .log {
   color: #e9ecef;
   cursor: pointer;

@@ -19,7 +19,7 @@
               ABOUT
             </li>
           </router-link>
-          <router-link class="router_link" to="">
+          <router-link class="router_link" to="/store">
             <li
               :class="{ active: store.state.activeElement === 'store' }"
               @click="setActive('store')"
