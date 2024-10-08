@@ -1,41 +1,17 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
 import SlaidBar from "../components/SlaidBar.vue";
+import { ref, watch, onMounted } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+const userLocation = ref([34.0522, -118.2437]); // Начальная точка (Лос-Анджелес)
 const map = ref(null);
 const marker = ref(null);
-const userLocation = ref([34.0522, -118.2437]); // Начальная точка (Лос-Анджелес)
-const userPath = ref([]); // Массив для хранения маршрута пользователя
 const polyline = ref(null); // Полилиния для отображения линии
+const userPath = ref([userLocation.value]); // Массив для маршрута пользователя
 
-// Координаты маршрута
-const routeCoordinates = [
-  [34.0522, -118.2437],
-  [34.0525, -118.245],
-  [34.053, -118.246],
-  [34.054, -118.247],
-  [34.055, -118.248],
-  [34.056, -118.249],
-  [34.057, -118.25],
-  [34.058, -118.251],
-  [34.059, -118.252],
-  [34.06, -118.253],
-  [34.061, -118.254],
-]; // Примерные координаты для "поездки"
-
-let currentPointIndex = 0; // Индекс текущей точки маршрута
-
-// Функция для интерполяции координат
-const interpolateCoordinates = (start, end, factor) => {
-  return [
-    start[0] + (end[0] - start[0]) * factor,
-    start[1] + (end[1] - start[1]) * factor,
-  ];
-};
-
-onMounted(() => {
+// Инициализация карты и маркера
+const initMap = () => {
   const americaBounds = [
     [85, -170], // Северо-западная граница
     [-60, -30], // Юго-восточная граница
@@ -43,69 +19,69 @@ onMounted(() => {
 
   // Создание карты
   map.value = L.map("map", {
-    center: userLocation.value, // Центр карты на начальные координаты пользователя
-    zoom: 14, // Более детальный зум
+    center: userLocation.value,
+    zoom: 14,
     minZoom: 3,
     maxZoom: 18,
     maxBounds: americaBounds,
     maxBoundsViscosity: 1.0,
     scrollWheelZoom: true,
     dragging: true,
+    attributionControl: false
   });
 
-  // Добавление слоя карты
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  // Добавление темного слоя карты
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     maxZoom: 18,
   }).addTo(map.value);
 
-  // Добавление маркера пользователя
-  marker.value = L.marker(userLocation.value, {
-    riseOnHover: true,
-    riseOffset: 250,
-  }).addTo(map.value);
+  // Добавление маркера
+  marker.value = L.marker(userLocation.value).addTo(map.value);
   marker.value.bindPopup("<b>User</b>").openPopup();
 
-  // Инициализация полилинии для маршрута пользователя
-  userPath.value.push(userLocation.value); // Добавляем начальные координаты в маршрут
+  // Инициализация полилинии
   polyline.value = L.polyline(userPath.value, {
-    color: "black",
+    color: "darkgray",
     weight: 5,
     opacity: 0.7,
   }).addTo(map.value);
+};
 
-  // Плавное перемещение между точками маршрута
-  const moveUser = (start, end) => {
-    const steps = 100; // Количество шагов для плавности
-    let step = 0;
+// Функция для плавного перемещения маркера
+const moveUser = (newLocation) => {
+  // Плавное перемещение маркера к новой позиции
+  marker.value.setLatLng(newLocation); // Перемещаем маркер
+  userPath.value.push(newLocation); // Добавляем в маршрут
+  polyline.value.setLatLngs(userPath.value); // Обновляем линию
+};
 
-    const intervalId = setInterval(() => {
-      if (step <= steps) {
-        const factor = step / steps;
-        const newLocation = interpolateCoordinates(start, end, factor);
-        userLocation.value = newLocation; // Обновляем координаты
-        marker.value.setLatLng(newLocation); // Перемещаем маркер
-        userPath.value.push(newLocation); // Добавляем в маршрут
-        polyline.value.setLatLngs(userPath.value); // Обновляем линию
-        step++;
-      } else {
-        clearInterval(intervalId); // Останавливаем интервал, когда шаги завершены
-        currentPointIndex++;
+// Функция для обработки обновлений данных пользователя
+const updateUserLocation = (newCoordinates) => {
+  // Обновляем координаты пользователя
+  userLocation.value = newCoordinates;
+  moveUser(newCoordinates);
+};
 
-        if (currentPointIndex < routeCoordinates.length - 1) {
-          // Переходим к следующей точке маршрута
-          moveUser(
-            routeCoordinates[currentPointIndex],
-            routeCoordinates[currentPointIndex + 1]
-          );
-        }
-      }
-    }, 2);
-  };
+// Используйте watch, чтобы отслеживать изменения в userLocation
+watch(userLocation, (newValue) => {
+  // Здесь можно выполнять дополнительные действия при изменении координат
+});
 
-  // Начинаем плавное движение по маршруту
-  moveUser(routeCoordinates[0], routeCoordinates[1]);
+// Инициализация карты при монтировании компонента
+onMounted(() => {
+  initMap();
+
+  // Пример: обновление координат каждые 5 секунд (в реальном приложении это будет получено из API)
+  setInterval(() => {
+    const randomOffset = 0.0001; // Небольшое смещение для демонстрации
+    const newCoordinates = [
+      userLocation.value[0] + randomOffset * (Math.random() > 0.5 ? 1 : -1),
+      userLocation.value[1] + randomOffset * (Math.random() > 0.5 ? 1 : -1),
+    ];
+    updateUserLocation(newCoordinates); // Обновляем координаты пользователя
+  }, 500); 
 });
 </script>
   
@@ -176,7 +152,9 @@ onMounted(() => {
 
   <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-
+.leaflet-control-attribution{
+  opacity: 0;
+}
 .sidebar {
   z-index: 1;
 }
@@ -188,6 +166,7 @@ onMounted(() => {
 #map {
   height: 100%; /* Карта занимает весь контейнер */
   width: 100%;
+  background-color: #1b1b1b;
   z-index: 0; /* Устанавливаем низкий z-index для карты */
 }
 .menu-item {
