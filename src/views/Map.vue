@@ -1,90 +1,125 @@
 <script setup>
 import SlaidBar from "../components/SlaidBar.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster"; // Импортируем кластеризацию маркеров
+import axios from "axios";
 
-const userLocation = ref([34.0522, -118.2437]); // Начальная точка (Лос-Анджелес)
 const map = ref(null);
-const marker = ref(null);
-const polyline = ref(null); // Полилиния для отображения линии
-const userPath = ref([userLocation.value]); // Массив для маршрута пользователя
+const userMarkers = ref(new Map()); // Хранение маркеров для каждого пользователя
+const markersCluster = ref(null); // Кластер для всех маркеров
+const userPolylines = ref(new Map());
+const users = ref([]); // Список пользователей
+const searchQuery = ref(""); // Запрос поиска
 
-// Инициализация карты и маркера
+// Инициализация карты
 const initMap = () => {
-  const americaBounds = [
-    [85, -170], // Северо-западная граница
-    [-60, -30], // Юго-восточная граница
-  ];
-
-  // Создание карты
   map.value = L.map("map", {
-    center: userLocation.value,
+    center: [34.0522, -118.2437],
     zoom: 14,
     minZoom: 3,
     maxZoom: 18,
-    maxBounds: americaBounds,
-    maxBoundsViscosity: 1.0,
     scrollWheelZoom: true,
     dragging: true,
-    attributionControl: false
   });
 
-  // Добавление темного слоя карты
+  // Добавляем слой карты
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     maxZoom: 18,
   }).addTo(map.value);
 
-  // Добавление маркера
-  marker.value = L.marker(userLocation.value).addTo(map.value);
-  marker.value.bindPopup("<b>User</b>").openPopup();
-
-  // Инициализация полилинии
-  polyline.value = L.polyline(userPath.value, {
-    color: "darkgray",
-    weight: 5,
-    opacity: 0.7,
-  }).addTo(map.value);
+  // Инициализация кластера маркеров
+  markersCluster.value = L.markerClusterGroup({
+    iconCreateFunction: (cluster) => {
+      const count = cluster.getChildCount(); // Получаем количество маркеров в кластере
+      return L.divIcon({
+        html: `<div style="color: yellow; font-size: 16px; font-weight: bold;">${count}</div>`, // Устанавливаем желтый цвет и жирный текст
+        className: "custom-cluster-icon", // Класс для дальнейшей кастомизации
+        iconSize: L.point(40, 40) // Размер иконки
+      });
+    }
+  });
+  map.value.addLayer(markersCluster.value);
 };
 
-// Функция для плавного перемещения маркера
-const moveUser = (newLocation) => {
-  // Плавное перемещение маркера к новой позиции
-  marker.value.setLatLng(newLocation); // Перемещаем маркер
-  userPath.value.push(newLocation); // Добавляем в маршрут
-  polyline.value.setLatLngs(userPath.value); // Обновляем линию
+// Функция для создания или обновления маркера для пользователя
+const addUserMarker = (user) => {
+  const newLocation = [user.latitude, user.longitude];
+  
+  // Проверяем, существует ли маркер для данного пользователя
+  let userMarker = userMarkers.value.get(user.id);
+  let userPolyline = userPolylines.value.get(user.id);
+
+  if (userMarker) {
+    // Если маркер уже существует, обновляем его положение
+    userMarker.setLatLng(newLocation);
+    userPolyline.addLatLng(newLocation);
+  } else {
+    // Если маркер не существует, создаем новый
+    userMarker = L.marker(newLocation).bindPopup(`<b>Driver: ${user.user}</b>`);
+    markersCluster.value.addLayer(userMarker); // Добавляем маркер в кластер
+    
+    // Создаем полилинию для отслеживания пути
+    userPolyline = L.polyline([newLocation], { color: "silver", weight: 2, opacity: 0.6 });
+    userPolyline.addTo(map.value);
+    
+    // Сохраняем маркер и полилинию в соответствующие мапы
+    userMarkers.value.set(user.id, userMarker);
+    userPolylines.value.set(user.id, userPolyline);
+  }
 };
 
-// Функция для обработки обновлений данных пользователя
-const updateUserLocation = (newCoordinates) => {
-  // Обновляем координаты пользователя
-  userLocation.value = newCoordinates;
-  moveUser(newCoordinates);
+// Функция для получения данных пользователей с сервера
+const fetchUserLocations = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.get(
+      "http://34.141.16.56/api/v1/map/locations/",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    users.value = response.data.results;
+
+    // Добавляем маркеры для всех пользователей
+    users.value.forEach((user) => {
+      addUserMarker(user);
+    });
+  } catch (error) {
+    console.error("Ошибка при получении данных от бэкенда:", error);
+  }
 };
 
-// Используйте watch, чтобы отслеживать изменения в userLocation
-watch(userLocation, (newValue) => {
-  // Здесь можно выполнять дополнительные действия при изменении координат
+// Фильтрация пользователей на основе поискового запроса
+const filteredUsers = computed(() => {
+  return users.value.filter((user) => {
+    return String(user.user).toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
 });
 
-// Инициализация карты при монтировании компонента
+// Функция для зума на пользователя при выборе из списка
+const zoomToUser = (user) => {
+  const marker = userMarkers.value.get(user.id);
+  if (marker) {
+    map.value.setView(marker.getLatLng(), 15); // Устанавливаем зум и центруем карту на пользователя
+    marker.openPopup(); // Открываем попап маркера
+  }
+};
+
+// Инициализация карты и запуск интервала для обновления данных
 onMounted(() => {
   initMap();
 
-  // Пример: обновление координат каждые 5 секунд (в реальном приложении это будет получено из API)
+  // Получаем данные о пользователях
+  fetchUserLocations();
+
+  // Обновляем данные каждые 5 секунд
   setInterval(() => {
-    const randomOffset = 0.0001; // Небольшое смещение для демонстрации
-    const newCoordinates = [
-      userLocation.value[0] + randomOffset * (Math.random() > 0.5 ? 1 : -1),
-      userLocation.value[1] + randomOffset * (Math.random() > 0.5 ? 1 : -1),
-    ];
-    updateUserLocation(newCoordinates); // Обновляем координаты пользователя
-  }, 500); 
+    fetchUserLocations();
+  }, 5000);
 });
 </script>
-  
 <template>
   <div class="maps">
     <div id="map" style="height: 800px; width: 100%"></div>
@@ -114,10 +149,20 @@ onMounted(() => {
         </div>
       </header>
       <div class="box">
-        <input class="box-input" type="search" placeholder="search by name" />
-        <div class="box-border">
+        <input
+          class="box-input"
+          type="search"
+          v-model="searchQuery"
+          placeholder="search by name"
+        />
+        <div
+          class="box-border"
+          v-for="user in filteredUsers"
+          :key="user.id"
+          @click="zoomToUser(user)"
+        >
           <div class="box-small">
-            <h4 class="box-h4">Michael Greer (Unit 1234)</h4>
+            <h4 class="box-h4">{{ user.user }}</h4>
             <div class="box-mph">53 mph</div>
           </div>
           <div class="box-location">
@@ -129,21 +174,21 @@ onMounted(() => {
             <p class="box-p">Started: 08-02-2024, 20:36 CDT</p>
           </div>
         </div>
-        <div class="section" onclick="toggleSection(this)">
+        <!-- <div  class="section" @click="toggleSection2()">
           <div class="section-title">Diagnostics</div>
           <img src="../icons/Icon - arrow.svg" alt="" />
         </div>
-        <div class="section-content">
+        <div id="section-content2" class="section-content">
           <p>Diagnostic content goes here...</p>
         </div>
 
-        <div class="section" onclick="toggleSection(this)">
+        <div  class="section" @click="toggleSection()">
           <div class="section-title">Trip history</div>
           <img src="../icons/Icon - arrow.svg" alt="" />
         </div>
-        <div class="section-content">
+        <div id="section-content" class="section-content">
           <p>Trip history content goes here...</p>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -152,7 +197,7 @@ onMounted(() => {
 
   <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-.leaflet-control-attribution{
+.leaflet-control-attribution {
   opacity: 0;
 }
 .sidebar {
@@ -386,8 +431,8 @@ p {
   font-family: "inter";
   font-size: 16px;
   font-weight: 400;
-  line-height: 1px;
   color: white;
+  margin: 0;
 }
 .box-mph {
   margin-top: 12px;
@@ -412,6 +457,9 @@ p {
   color: white;
   padding-left: 25px;
 }
+.box-location p {
+  margin: 0;
+}
 .box-copy {
   padding-left: 5px;
 }
@@ -424,6 +472,7 @@ p {
   line-height: 1px;
   font-size: 16px;
   border-bottom: 2px solid gray;
+  margin-top: 10px;
 }
 .box-border {
   cursor: pointer;
@@ -465,8 +514,9 @@ p {
   padding: 10px 0;
   color: #ccc;
 }
-.expanded .section-content {
+.expandeds {
   display: block;
+  padding: 10px 50px;
 }
 .sidebar p {
   align-items: center;
@@ -567,6 +617,7 @@ p {
       p {
         margin-top: 40px;
       }
+      
     }
   }
 }
