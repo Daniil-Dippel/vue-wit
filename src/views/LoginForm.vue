@@ -144,10 +144,6 @@ function loginUser() {
         alert("Authentication failed.");
       }
     })
-    .catch((error) => {
-      console.error("Error:", error);
-      alert("Failed to log in.");
-    });
 }
 
 const togglePasswordVisibility = () => {
