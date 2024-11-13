@@ -191,7 +191,7 @@ const handleSubmit = async () => {
     };
 
     // Отправка запроса на сервер
-    const response = await fetch('http://34.141.16.56/api/v1/account/register/', {
+    const response = await fetch('http://34.40.8.20/api/v1/account/register/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

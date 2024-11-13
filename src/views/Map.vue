@@ -75,7 +75,7 @@ const fetchUserLocations = async () => {
   try {
     const accessToken = localStorage.getItem("accessToken");
     const response = await axios.get(
-      "http://34.141.16.56/api/v1/map/locations/",
+      "http://34.40.8.20/api/v1/map/locations/",
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
